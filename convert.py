@@ -46,13 +46,13 @@ def get_playlist_videos(yt_api_token, playlist_id):
 
 
 def create_spotify_playlist(username_id):
-    ''' spotify_token = util.prompt_for_user_token(
+    spotify_token = util.prompt_for_user_token(
         username=username_id,
         scope="playlist-modify-public",
         client_id=os.environ.get('SPOTIPY_CLIENT_ID'),
         client_secret=os.environ.get('SPOTIPY_CLIENT_SECRET'),
         redirect_uri=os.environ.get('SPOTIPY_REDIRECT_URI')
-    )'''
+    )
     scope = 'playlist-modify-public'
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
     sp.user_playlist_create(username_id, 'YouTube Converter PL', public=True, description='Test')
