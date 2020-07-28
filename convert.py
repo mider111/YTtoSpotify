@@ -1,7 +1,7 @@
 # TODO Get YT playlist and video titles ----- DONE
 # TODO Clean titles. ----- DONE
 # TODO Log in spotify and create empty playlist ----- DONE
-# TODO Add songs to playlist 
+# TODO Add songs to playlist
 
 from googleapiclient.discovery import build
 import os
@@ -14,9 +14,10 @@ from datetime import date
 youtube_token = os.environ.get('YT')
 scope = 'playlist-modify-public'
 OAuth = SpotifyOAuth(scope=scope,
-                        redirect_uri='http://localhost:8888/callback',
-                        cache_path='D:/MyProjects/YTtoSpotify')
+                     redirect_uri='http://localhost:8888/callback',
+                     cache_path='D:/MyProjects/YTtoSpotify/')
 sp = spotipy.Spotify(auth_manager=OAuth)
+user_id = 'wwohpbbvy3sz9ul8fspapyp2o'
 
 
 def get_playlist_videos(yt_api_token, playlist_id):
@@ -62,8 +63,9 @@ def create_spotify_playlist(spotify_client, username_id):
     today = date.today()
     d4 = today.strftime("%b-%d-%Y")
 
-    sp.user_playlist_create(username_id, f'YouTube Converter PL {str(d4)}', public=True,
-                            description='Youtube Playlist converted using https://github.com/mider111/YTtoSpotify')
+    playlist = sp.user_playlist_create(username_id, f'YouTube Converter PL {str(d4)}', public=True,
+                                       description='Youtube Playlist converted using https://github.com/mider111/YTtoSpotify')
+    return playlist['id']
 
 
 def clean_titles(videos):
@@ -77,14 +79,29 @@ def clean_titles(videos):
         result = re.search(regex, v)
         if result:
             v = re.sub(regex, '', v)
+            v = re.sub('[-|–]', '', v)
+            v = ' '.join(v.split())
             clean_list.append(v)
     return clean_list
 
-def add_song(spotify_client, playlist_id):
-    playlists = sp.user_playlists('wwohpbbvy3sz9ul8fspapyp2o')
-    print(playlists['items'][0]['uri'])
+
+def search_songs(spotify_client, titles):
+    song_list = []
+    not_found = []
+    for v in titles:
+        q = re.sub('[ ]', "+", v)
+        track = sp.search(q, type='track')
+        try:
+            song_list.append(track['tracks']['items'][0]['id'])
+        except IndexError:
+            not_found.append(v)
+    print(not_found)
+    return song_list
 
 
+def add_songs(spotify_client, playlist_id, user_id, tracks):
+    sp.user_playlist_add_tracks(
+        user=user_id, playlist_id=playlist_id, tracks=tracks)
 
 
 def main():
@@ -92,10 +109,12 @@ def main():
         youtube_token, 'PLxA687tYuMWjuNRTGvDuLQZjHaLQv3wYL')
     # print(len(videos))
     # print(videos)
-    #create_spotify_playlist(sp, 'wwohpbbvy3sz9ul8fspapyp2o')
+    playlist_id = create_spotify_playlist(sp, user_id)
     # print(clean_titles(videos))
-    add_song(sp, '123')
-    print('Success! /n Check your Spotify.')
+    songs = search_songs(sp, clean_titles(videos))
+    add_songs(sp, playlist_id, user_id, songs)
+    print('Success! \n Check your Spotify.')
+
 
 if __name__ == "__main__":
     main()
