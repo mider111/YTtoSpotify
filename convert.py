@@ -1,8 +1,3 @@
-# TODO Get YT playlist and video titles ----- DONE
-# TODO Clean titles. ----- DONE
-# TODO Log in spotify and create empty playlist ----- DONE
-# TODO Add songs to playlist
-
 from googleapiclient.discovery import build
 import os
 import spotipy
