@@ -26,6 +26,6 @@ Open terminal and navigate to the script folder:
 python create.py
 ```
 ## To-Do
-1. Improve the query search to hget better results.
+1. Improve the query search to get better results.
 2. More error handling
 3. Wait for the spotipy module to resolve my issue.
