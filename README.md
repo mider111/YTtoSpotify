@@ -17,7 +17,7 @@ Set up environmental variables:
 4. SPOTIPY_CLIENT_ID
 ## Set-up
 ```
-git clone https://github.com/mider111/YTtoSpotify
+git clone https://github.com/vikivanov/YTtoSpotify
 pip install spotipy google-api-python-client
 ``` 
 ## Usage
